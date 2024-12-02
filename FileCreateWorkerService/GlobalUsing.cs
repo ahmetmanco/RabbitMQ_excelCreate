@@ -1,10 +1,9 @@
 ﻿global using ExcelMessage;
 global using FileCreateWorkerService;
-global using FileCreateWorkerService.Models;
 global using Microsoft.EntityFrameworkCore;
 global using RabbitMQ.Client;
 global using RabbitMQ_excelCreate.Service;
-global using RabbitMQClientService = FileCreateWorkerService.Services.RabbitMQClientService;
+global using RabbitMQClientService = FileCreateWorkerService.Services.ClientService;
 global using ClosedXML.Excel;
 global using RabbitMQ.Client.Events;
 global using System.Data;

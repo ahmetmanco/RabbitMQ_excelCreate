@@ -1,6 +1,6 @@
 ﻿namespace ExcelMessage
 {
-    public class CreateExcelMessage
+    public class ExcelMessages
     {
         public int FileId { get; set; }
     }

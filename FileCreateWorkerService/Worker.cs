@@ -1,12 +1,16 @@
+
+
+using FileWorkerService.Models;
+
 namespace FileCreateWorkerService
 {
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
-        private readonly RabbitMQClientService _rabbitmqClientService;
-        private readonly IServiceProvider _serviceProvider; //Adventure veritabanýný buraya direkt çekemem o yüzden serviceprovider üzerinden aldým
+        private readonly ClientService _rabbitmqClientService;
+        private readonly IServiceProvider _serviceProvider; //Northwind veritabanýný buraya direkt çekemem o yüzden serviceprovider üzerinden aldým
         private IModel _channel;
-        public Worker(ILogger<Worker> logger, RabbitMQClientService rabbitmqClientService, IServiceProvider serviceProvider)
+        public Worker(ILogger<Worker> logger, ClientService rabbitmqClientService, IServiceProvider serviceProvider)
         {
             _logger = logger;
             _rabbitmqClientService = rabbitmqClientService;
@@ -25,7 +29,7 @@ namespace FileCreateWorkerService
         {
             var consumer = new AsyncEventingBasicConsumer(_channel);
 
-            _channel.BasicConsume(RabbitMQClientService.KuyrukName, false, consumer);
+            _channel.BasicConsume(ClientService.KuyrukName, false, consumer);
             consumer.Received += Consumer_Received;
 
             return Task.CompletedTask;
@@ -37,7 +41,7 @@ namespace FileCreateWorkerService
             await Task.Delay(5000);
 
             var messageBody = Encoding.UTF8.GetString(@event.Body.ToArray());
-            var excel = JsonSerializer.Deserialize<CreateExcelMessage>(messageBody);
+            var excel = JsonSerializer.Deserialize<ExcelMessages>(messageBody);
 
             if (excel == null)
             {
@@ -79,7 +83,7 @@ namespace FileCreateWorkerService
             List<Product> products;
             using (var scope = _serviceProvider.CreateScope())
             {
-                var context = scope.ServiceProvider.GetRequiredService<AdventureWorksLt2022Context>();
+                var context = scope.ServiceProvider.GetRequiredService<NorthwindContext>();
 
                 products = context.Products.ToList();
             }
@@ -87,14 +91,14 @@ namespace FileCreateWorkerService
             {
                 TableName = tableName
             };
-            dataTable.Columns.Add("ProducId", typeof(int));
-            dataTable.Columns.Add("ProducName", typeof(string));
-            dataTable.Columns.Add("ProductNumber", typeof(string));
-            dataTable.Columns.Add("color", typeof(string)); // bu tablo memory'de oluþuyor
+            dataTable.Columns.Add("ProductId", typeof(int));
+            dataTable.Columns.Add("ProductName", typeof(string));
+            dataTable.Columns.Add("UnitPrice", typeof(string));
+            dataTable.Columns.Add("QuantityPerUnit", typeof(string)); // bu tablo memory'de oluþuyor
 
             products.ForEach(x =>
             {
-                dataTable.Rows.Add(x.ProductId, x.Name, x.ProductNumber, x.Color);
+                dataTable.Rows.Add(x.ProductId, x.ProductName, x.UnitPrice, x.QuantityPerUnit);
             });
             return dataTable;
 

@@ -1,14 +1,14 @@
 ﻿namespace FileCreateWorkerService.Services
 {
-    public class RabbitMQClientService : IDisposable
+    public class ClientService : IDisposable
     {
         private readonly ConnectionFactory _connectionFactory;
         private IConnection _connection;
         private IModel _channel;
-        private readonly ILogger<RabbitMQClientService> _logger;
+        private readonly ILogger<ClientService> _logger;
         public static string KuyrukName = "kuyruk-excel-file";
 
-        public RabbitMQClientService(ILogger<RabbitMQClientService> logger, ConnectionFactory connectionFactory)
+        public ClientService(ILogger<ClientService> logger, ConnectionFactory connectionFactory)
         {
             _logger = logger;
             _connectionFactory = connectionFactory;

@@ -1,18 +1,13 @@
-﻿using ExcelMessage;
-using RabbitMQ.Client;
-using RabbitMQ_excelCreate.SeedData;
-using RabbitMQ_excelCreate.Service;
-using System.Configuration;
-
-var builder = WebApplication.CreateBuilder(args);
+﻿var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+builder.Services.AddSignalR();
 
 builder.Services.AddSingleton(x => new ConnectionFactory() { Uri = new Uri(builder.Configuration.GetConnectionString("RabbitMq")), DispatchConsumersAsync = true });
-builder.Services.AddSingleton<CreateExcelMessage>();
-builder.Services.AddSingleton<RabbitMQPublisher>();
-builder.Services.AddSingleton<RabbitMQClientService>();
+builder.Services.AddSingleton<ExcelMessages>();
+builder.Services.AddSingleton<Publisher>();
+builder.Services.AddSingleton<ClientService>();
 
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
@@ -63,7 +58,10 @@ app.UseRouting();
 await SeedData.SeedAsync(app); 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapHub<xHub>("/Hub");
 app.MapControllerRoute(
+
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 

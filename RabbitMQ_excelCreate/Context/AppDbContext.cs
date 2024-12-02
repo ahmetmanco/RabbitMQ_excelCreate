@@ -6,6 +6,6 @@
         {
             
         }
-        public DbSet<UserFile> UserFiles { get; set; }
+        public DbSet<UFiles> UserFiles { get; set; }
     }
 }

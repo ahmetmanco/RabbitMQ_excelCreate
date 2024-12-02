@@ -1,6 +1,6 @@
 ﻿namespace RabbitMQ_excelCreate.Models
 {
-    public class UserFile
+    public class UFiles
     {
         public int Id { get; set; }
         public string UserId { get; set; }

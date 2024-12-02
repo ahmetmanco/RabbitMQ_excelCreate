@@ -9,9 +9,9 @@ namespace RabbitMQ_excelCreate.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly AppDbContext _appDbContext;
-        private readonly RabbitMQPublisher _rabbitMQPublisher;
+        private readonly Publisher _rabbitMQPublisher;
 
-        public ProductController(UserManager<IdentityUser> userManager, AppDbContext appDbContext, RabbitMQPublisher rabbitMQPublisher)
+        public ProductController(UserManager<IdentityUser> userManager, AppDbContext appDbContext, Publisher rabbitMQPublisher)
         {
             _userManager = userManager;
             _appDbContext = appDbContext;
@@ -28,7 +28,7 @@ namespace RabbitMQ_excelCreate.Controllers
 
             var fileName = $"product-excel-{Guid.NewGuid().ToString().Substring(1, 10)}";
 
-            UserFile file = new UserFile()
+            UFiles file = new UFiles()
             {
                 UserId = user.Id,
                 FileName = fileName,
@@ -38,7 +38,7 @@ namespace RabbitMQ_excelCreate.Controllers
 
             await _appDbContext.SaveChangesAsync();
 
-            _rabbitMQPublisher.Publish(new ExcelMessage.CreateExcelMessage()
+            _rabbitMQPublisher.Publish(new ExcelMessage.ExcelMessages()
             {
                 FileId = file.Id,
             });
@@ -50,7 +50,7 @@ namespace RabbitMQ_excelCreate.Controllers
         public async Task<IActionResult> Files()
         {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            return View(await _appDbContext.UserFiles.Where(x=>x.UserId == user.Id).ToListAsync());
+            return View(await _appDbContext.UserFiles.Where(x=>x.UserId == user.Id).OrderByDescending(x=>x.Id).ToListAsync());
         }
     }
 }

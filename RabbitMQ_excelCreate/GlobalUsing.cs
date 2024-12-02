@@ -16,6 +16,11 @@ global using ExcelMessage;
 global using RabbitMQ.Client;
 global using System.Text;
 global using System.Text.Json;
+global using excelCreate.Hubs;
+global using Microsoft.AspNetCore.SignalR;
+global using RabbitMQ_excelCreate.SeedData;
+global using RabbitMQ_excelCreate.Service;
+global using System.Configuration;
 
 
 

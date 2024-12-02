@@ -1,11 +1,14 @@
+using FileWorkerService.Models;
+
 var builder = Host.CreateApplicationBuilder(args);
 
 // Veritabaný Baðlantýsý
-builder.Services.AddDbContext<AdventureWorksLt2022Context>(x =>
+builder.Services.AddDbContext<NorthwindContext>(x =>
 {
     x.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer"));
 });
 
+//builder.Services.AddRazorRuntimeCompilation();
 // RabbitMQ ConnectionFactory
 builder.Services.AddSingleton(sp =>
     new ConnectionFactory
@@ -15,7 +18,7 @@ builder.Services.AddSingleton(sp =>
     });
 
 // RabbitMQ Client Service
-builder.Services.AddSingleton<RabbitMQClientService>();
+builder.Services.AddSingleton<ClientService>();
 
 // Worker Service
 builder.Services.AddHostedService<Worker>();
